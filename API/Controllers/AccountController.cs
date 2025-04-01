@@ -18,30 +18,33 @@ public class AccountController(DataContext context,ITokenService tokenService):B
         if(await UserExists(registerdto.username))
         return BadRequest("UserName already Exists");
 
-        using var hmac=new HMACSHA512();
+        return Ok();
 
-        var user=new AppUser
-        {
-                Username=registerdto.username.ToLower(),
-                PasswordHash=hmac.ComputeHash(Encoding.UTF8.GetBytes(registerdto.password)),
-                PasswordSalt=hmac.Key
-        };
+        // using var hmac=new HMACSHA512();
 
-        context.Users.Add(user);
-        await context.SaveChangesAsync();
+        // var user=new AppUser
+        // {
+        //         Username=registerdto.username.ToLower(),
+        //         PasswordHash=hmac.ComputeHash(Encoding.UTF8.GetBytes(registerdto.password)),
+        //         PasswordSalt=hmac.Key
+        // };
 
-        return new UserDTO
-        {
+        // context.Users.Add(user);
+        // await context.SaveChangesAsync();
 
-            username=user.Username,
-            Token=tokenService.CreateToken(user)
-        };
+        // return new UserDTO
+        // {
+
+        //     username=user.Username,
+        //     Token=tokenService.CreateToken(user)
+        // };
     }
 
     [HttpPost("login")]
     public async Task<ActionResult<UserDTO>> Login(LoginDTO logindto)
     {
-        var user=await context.Users.FirstOrDefaultAsync(x=>x.Username==logindto.username.ToLower());
+        //var user=await context.Users.FirstOrDefaultAsync(x=>x.Username==logindto.username.ToLower());
+        var user=await context.Users.FirstOrDefaultAsync(x=>x.Username==logindto.username);
 
         if(user==null) return Unauthorized("Invalid Username");
 
